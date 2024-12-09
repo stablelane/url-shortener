@@ -4,9 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            justify-content: start;
+            min-height: 100vh;
+            margin: 10px 0 0 0;
+        }
+        h1{
+            margin: 0;
+        }
+        label {
+            display: none;
+        }
+        button {
+            background-color: green;
+            color: white;
+            border: none;
+            padding: 3px 5px;
+        }
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f4f4f4;
+        }
+    </style>
 </head>
 <body>
-    <h1>URL Shrinker</h1>
+    <h1>URL Shortner</h1>
     <form action="/shortUrl" method="post">
         <label for="fullUrl">URL</label>
         <input type="url" name="fullUrl" id="fullUrl">
