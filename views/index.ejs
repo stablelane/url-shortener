@@ -44,9 +44,9 @@
 </head>
 <body>
     <h1>URL Shortner</h1>
-    <form action="/shortUrl" method="post">
+    <form id="shortUrlForm">
         <label for="fullUrl">URL</label>
-        <input type="url" name="fullUrl" id="fullUrl">
+        <input type="url" name="fullUrl" id="fullUrl" required>
         <button type="submit">Shrink</button>
     </form>
 

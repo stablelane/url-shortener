@@ -5,16 +5,19 @@ const shortUrl = require('./models/shortUrl')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const User = require('./models/user')
-
+require('dotenv').config()
+const cookieParser = require('cookie-parser');
 mongoose.connect('mongodb://localhost/urlShortner')
 
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false}))
 app.use(express.static('public'));
-
-
-app.get('/', async (req, res) => {    
-    const shortUrls = await shortUrl.find()
+app.use(express.json());
+app.use(cookieParser());
+ 
+app.get('/', authenticateToken, async (req, res) => {    
+    const shortUrls = await shortUrl.find({ userId: req.userId })
+    console.log(shortUrls)
     res.render('index', { shortUrls: shortUrls})
 })
 app.get('/signup', (req,res) => {
@@ -23,7 +26,6 @@ app.get('/signup', (req,res) => {
 app.post('/signup', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        console.log(hashedPassword)
         const newUser = new User ({
             name: req.body.name,
             username: req.body.username,
@@ -49,20 +51,27 @@ app.get('/login', (req,res) => {
 app.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ username: req.body.username})
-        if (user) {
-            if (await bcrypt.compare(req.body.password, user.password)){
-                console.log("password is correct")
-            } else {
-                console.log("password is incorrect")
-            }
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid username or password' });
         }
+        if (await bcrypt.compare(req.body.password, user.password)){
+            console.log("password is correct")
+            const accessToken = jwt.sign(user.id, process.env.ACCESS_TOKEN_SECRET)
+            // res.json({ accessToken: accessToken})
+            res.cookie('token', accessToken, { httpOnly: true, secure: true,sameSite: 'None', maxAge: 299999.88 }); // secure flag for HTTPS
+
+            return res.json({ message: 'Login successful' });
+        } else {
+            console.log("password is incorrect")
+        }
+        
         
     } catch (error) {
         res.status(403).json({ error: error.message})
     }
 })
-app.post('/shortUrl', async (req, res) => {
-    await shortUrl.create({ full: req.body.fullUrl })
+app.post('/shortUrl', authenticateToken, async (req, res) => {
+    await shortUrl.create({ full: req.body.fullUrl, userId: req.userId })
     res.redirect('/')
 })
 
@@ -76,5 +85,18 @@ app.get('/:shortUrl', async (req, res) => {
     Url.clicks++
     Url.save()
 })
+
+// jwt authentication midddleware
+function authenticateToken(req, res, next) {
+    const token = req.cookies.token
+    if (token == null) return res.status(401)
+    
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, userid) => {
+        if (err) return res.status(403)
+        req.userId = userid
+        next()
+    })
+
+}
 
 app.listen(process.env.PORT || 5000)

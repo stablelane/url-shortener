@@ -11,6 +11,11 @@ const shortUrlSchema = new mongoose.Schema({
         required: true,
         default: shortID.generate
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     clicks: {
         type: Number,
         required: true,
