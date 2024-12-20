@@ -23,11 +23,9 @@ app.post('/shortUrl', async (req, res) => {
 app.get('/increment/:shortUrl', async (req, res) => {
     const Url = await ShortUrl.findOne({ short: req.params.shortUrl })
     res.json(Url)
-    console.log(Url,"2")
 })
 app.get('/:shortUrl', async (req, res) => {
     const Url = await ShortUrl.findOne({ short: req.params.shortUrl })
-    console.log(Url, "1", req.params)
     res.redirect(Url.full)
     Url.clicks++
     Url.save()
