@@ -21,12 +21,23 @@ Follow these steps to set up and run the application:
    - Ensure MongoDB is installed and running on your local machine.
    - Use the default `mongodb://localhost/urlShortner` URL for the database.
 
-4. Start the application:
+4. Create a `.env` file:
+   - In the root of the project, create a `.env` file.
+   - Add the following environment variables:
+     ```env
+     ACCESS_TOKEN_SECRET=<your-64-bit-secret-key>
+     ```
+   - To generate a 64-bit secret key, you can use Node.js:
+     ```bash
+     node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+     ```
+
+5. Start the application:
    ```bash
    npm run devStart
    ```
 
-5. Access the app:
+6. Access the app:
    - Open your browser and go to `http://localhost:5000` (or the specified PORT if provided in the environment variables).
 
 ## Features
@@ -34,14 +45,8 @@ Follow these steps to set up and run the application:
 - Create short URLs
 - Redirect to the original URL using the short URL
 - Track the number of clicks on each URL
-- User authentication with JWT saved in cookies for enhanced security
-
-## Authentication Details
-
-- JWT (JSON Web Token) is used for user authentication.
-- Tokens are securely stored in cookies instead of localStorage for better security practices.
-- User passwords are hashed using bcrypt to ensure data protection.
-- MongoDB is used for storing user credentials and URLs.
+- User authentication with JWT stored in cookies
+- Secure password storage with bcrypt
 
 ## Requirements
 
