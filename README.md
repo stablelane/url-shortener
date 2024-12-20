@@ -34,8 +34,17 @@ Follow these steps to set up and run the application:
 - Create short URLs
 - Redirect to the original URL using the short URL
 - Track the number of clicks on each URL
+- User authentication with JWT saved in cookies for enhanced security
+
+## Authentication Details
+
+- JWT (JSON Web Token) is used for user authentication.
+- Tokens are securely stored in cookies instead of localStorage for better security practices.
+- User passwords are hashed using bcrypt to ensure data protection.
+- MongoDB is used for storing user credentials and URLs.
 
 ## Requirements
 
 - Node.js
 - MongoDB
+
